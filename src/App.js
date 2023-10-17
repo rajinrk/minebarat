@@ -11,8 +11,7 @@ function App() {
     
 
     function newDetails(name){
-        setDetails({...details,cityName : name.cityName})
-        setDetails({...details,stateName : name.stateName})
+        setDetails({...details,cityName : name.cityName,stateName : name.stateName})
     }
 
 return(
