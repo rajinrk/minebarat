@@ -2,47 +2,48 @@ import { useEffect, useState } from "react"
 import axios from 'axios'
 import CitiesList from "./citiesList"
 
-export default function ListComponent({newDetails}) {
+export default function ListComponent({ newDetails }) {
 
     const [states, setStates] = useState(null)
-    const [stateID,setStateID] = useState('')
-    const [stateName,setStateName]=useState('')
-    const [cityName,setCityName]=useState('')
+    const [stateName, setStateName] = useState('')
+    const [stateID, setStateID] = useState('')
+    const [cityName, setCityName] = useState('bangalore')
 
-    function cityNameChange(name){
+    function cityNameChange(name) {
         setCityName(name)
     }
 
     useEffect(() => {
         axios.get('http://api.minebrat.com/api/v1/states')
-        .then((result)=>  {setStates(result.data)
-        
-        })
-        .catch(err => console.log(err))
-    }, [stateName])
+            .then((result) => {
+                setStates(result.data)
+            })
+            .catch(err => console.log(err))
+    }, [])
+
     return (
         <div>
             <h1>states</h1>
-            <ul>
+            <select value={stateID}  onChange={(e) => {
+                const element = e.target.options[e.target.selectedIndex]
+                const customAttrVal = element.getAttribute('data-stateName')
+                setStateID(e.target.value)
+                setStateName(customAttrVal)
+            }}>
                 {states && states.map((elem) => {
-                    return  <li key={elem.stateId} onClick={()=>{
-                            setStateID(elem.stateId)
-                            setStateName(elem.stateName)
-                            }}>
+                    return <option key={elem.stateId} data-stateName={elem.stateName} value={elem.stateId}  >
                         {elem.stateName}
-                    </li>
-                    
+                    </option>
                 })}
-                </ul>
+            </select>
 
-               
+            <CitiesList stateID={stateID} cityNameChange={cityNameChange} />
 
-               <CitiesList stateID={stateID} cityNameChange={cityNameChange}/>
-            <button type='button' onClick={()=>newDetails({...newDetails,
+            <button type='button' onClick={() => newDetails({
+                ...newDetails,
                 cityName: cityName,
-                stateName:stateName
+                stateName: stateName
             })} >submit</button>
-
         </div>
     )
 }
